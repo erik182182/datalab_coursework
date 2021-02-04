@@ -17,6 +17,17 @@ public class DBMetaInfoRepository {
             "WHERE table_schema NOT IN ('information_schema','pg_catalog');";
     private static final String SQL_GET_COLUMNS = "SELECT * FROM information_schema.columns " +
             "WHERE table_schema = 'public' AND table_name = ?;";
+    private static final String SQL_CHECK_COLUMN_FOREIGN_KEYS = "SELECT DISTINCT 1 " +
+            "FROM information_schema.table_constraints AS tc " +
+            "         JOIN information_schema.key_column_usage AS kcu " +
+            "              ON tc.constraint_name = kcu.constraint_name " +
+            "                  AND tc.table_schema = kcu.table_schema " +
+            "         JOIN information_schema.constraint_column_usage AS ccu " +
+            "              ON ccu.constraint_name = tc.constraint_name " +
+            "                  AND ccu.table_schema = tc.table_schema " +
+            "WHERE tc.constraint_type = 'FOREIGN KEY' " +
+            "  AND tc.table_name = ? " +
+            "  AND kcu.column_name = ?;";
     private final Connection connection;
 
     public DBMetaInfoRepository(Connection connection) {
@@ -87,6 +98,18 @@ public class DBMetaInfoRepository {
                 columnInfos.add(columnInfo);
             }
             return columnInfos;
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public boolean checkColumnForeignKeys(String tablename, String columnname){
+        try {
+            PreparedStatement statement = connection.prepareStatement(SQL_CHECK_COLUMN_FOREIGN_KEYS);
+            statement.setString(1, tablename);
+            statement.setString(2, columnname);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
         } catch (SQLException e) {
             throw new IllegalArgumentException(e);
         }

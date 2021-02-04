@@ -9,6 +9,7 @@ import ru.erik182.datalab.exceptions.InitException;
 import ru.erik182.datalab.models.ColumnInfo;
 import ru.erik182.datalab.repositories.DBMetaInfoRepository;
 import ru.erik182.datalab.repositories.ObfuscationRepository;
+import sun.net.www.MeteredStream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -259,8 +260,11 @@ public class Application {
         Class.forName("org.postgresql.Driver");
         Connection connection = DriverManager.getConnection(host, username, password);
         ObfuscationRepository repository = new ObfuscationRepository(connection);
+        DBMetaInfoRepository metaInfoRepository = new DBMetaInfoRepository(connection);
         for(String columnname: columnnames.split(properties.getProperty("obf.columnname.separator"))){
             try {
+                if(metaInfoRepository.checkColumnForeignKeys(tablename, columnname))
+                    throw new SQLException("The column has links to other tables and is a foreign key.");
                 switch (ObfuscationModeEnum.valueOf(mode.toUpperCase())) {
                     case MD5: {
                         repository.obfuscateColumnMd5(tablename, columnname);
