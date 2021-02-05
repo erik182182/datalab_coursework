@@ -18,6 +18,8 @@ public class ObfuscationRepository {
 
     private static final String SQL_OBFUSCATE_COLUMN_DISP = "UPDATE %s SET %s = %s + (random() * 2 - 1)::int * %s * (random() * %s);";
 
+    private static final String SQL_OBFUSCATE_COLUMN_MASK = "UPDATE %s SET %s = regexp_replace(%s, ?, ?);";
+
     private final Connection connection;
 
     public ObfuscationRepository(Connection connection) {
@@ -42,5 +44,13 @@ public class ObfuscationRepository {
         String query = String.format(SQL_OBFUSCATE_COLUMN_DISP, tablename, columnname, columnname, columnname, dispProcent);
         Statement statement = connection.createStatement();
         statement.executeUpdate(query);
+    }
+
+    public void obfuscateColumnMask(String tablename, String columnname, String regexp, String result) throws SQLException {
+        String query = String.format(SQL_OBFUSCATE_COLUMN_MASK, tablename, columnname, columnname);
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, regexp);
+        statement.setString(2, result);
+        statement.executeUpdate();
     }
 }

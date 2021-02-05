@@ -2,14 +2,15 @@ package ru.erik182.datalab;
 
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import ru.erik182.datalab.configs.OptionsConfiguration;
 import ru.erik182.datalab.enums.ObfuscationModeEnum;
 import ru.erik182.datalab.exceptions.ExportDBException;
 import ru.erik182.datalab.exceptions.InitException;
+import ru.erik182.datalab.managers.CliOptionsManager;
+import ru.erik182.datalab.managers.MaskModeManager;
 import ru.erik182.datalab.models.ColumnInfo;
+import ru.erik182.datalab.models.MaskMode;
 import ru.erik182.datalab.repositories.DBMetaInfoRepository;
 import ru.erik182.datalab.repositories.ObfuscationRepository;
-import sun.net.www.MeteredStream;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class Application {
         CMD_START = properties.getProperty("app.cmd.start");
 
         //cmd options of application
-        OptionsConfiguration.optionsInit(properties, options);
+        CliOptionsManager.optionsInit(properties, options);
     }
 
     public static void perform(String[] args) throws ParseException, ExportDBException, SQLException, ClassNotFoundException {
@@ -261,9 +262,9 @@ public class Application {
         Connection connection = DriverManager.getConnection(host, username, password);
         ObfuscationRepository repository = new ObfuscationRepository(connection);
         DBMetaInfoRepository metaInfoRepository = new DBMetaInfoRepository(connection);
-        for(String columnname: columnnames.split(properties.getProperty("obf.columnname.separator"))){
+        for (String columnname : columnnames.split(properties.getProperty("obf.columnname.separator"))) {
             try {
-                if(metaInfoRepository.checkColumnForeignKeys(tablename, columnname))
+                if (metaInfoRepository.checkColumnForeignKeys(tablename, columnname))
                     throw new SQLException("The column has links to other tables and is a foreign key.");
                 switch (ObfuscationModeEnum.valueOf(mode.toUpperCase())) {
                     case MD5: {
@@ -284,7 +285,9 @@ public class Application {
             } catch (SQLException e) {
                 throw new SQLException("An error occurred while obfuscating the column. The column may have an incompatible data type, or the obfuscation mode was chosen incorrectly.", e);
             } catch (IllegalArgumentException e) {
-                throw new ParseException("This obfuscation mode does not exist.");
+                MaskMode maskMode = MaskModeManager.getMaskMode(mode);
+                if (maskMode == null) throw new ParseException("This obfuscation mode does not exist.");
+                repository.obfuscateColumnMask(tablename, columnname, maskMode.getRegexp(), maskMode.getResult());
             }
         }
     }

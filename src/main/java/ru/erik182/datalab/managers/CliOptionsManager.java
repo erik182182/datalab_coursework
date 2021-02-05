@@ -1,13 +1,13 @@
-package ru.erik182.datalab.configs;
+package ru.erik182.datalab.managers;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import java.util.Properties;
 
-public class OptionsConfiguration {
+public class CliOptionsManager {
 
-    private OptionsConfiguration() {
+    private CliOptionsManager() {
     }
 
 
