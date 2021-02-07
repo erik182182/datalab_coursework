@@ -10,12 +10,9 @@ import java.util.Properties;
 
 public class MaskModeManager {
 
-    private MaskModeManager() {
-    }
-
-    private static Properties properties;
     private static final String PROPERTIES_URL = "src/main/resources/masks.properties";
     private static final Logger log = Logger.getLogger(Application.class);
+    private static final Properties properties;
 
     static {
         // property file init
@@ -28,6 +25,9 @@ public class MaskModeManager {
         } catch (IOException e) {
             log.error("Property initialization error", e);
         }
+    }
+
+    private MaskModeManager() {
     }
 
     public static MaskMode getMaskMode(String name) {

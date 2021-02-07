@@ -26,7 +26,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.host.description")
         );
-        hostOption.setArgs(1); // число аргументов в опции
+        hostOption.setArgs(1);
 
         Option passwordOption = new Option(
                 properties.getProperty("option.password.short"),
@@ -34,7 +34,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.password.description")
         );
-        passwordOption.setArgs(1); // число аргументов в опции
+        passwordOption.setArgs(1);
 
         Option portOption = new Option(
                 properties.getProperty("option.port.short"),
@@ -42,7 +42,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.port.description")
         );
-        portOption.setArgs(1); // число аргументов в опции
+        portOption.setArgs(1);
 
         Option dbnameOption = new Option(
                 properties.getProperty("option.dbname.short"),
@@ -50,7 +50,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.dbname.description")
         );
-        dbnameOption.setArgs(1); // число аргументов в опции
+        dbnameOption.setArgs(1);
 
         Option tablenameOption = new Option(
                 properties.getProperty("option.tablename.short"),
@@ -58,7 +58,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.tablename.description")
         );
-        tablenameOption.setArgs(1); // число аргументов в опции
+        tablenameOption.setArgs(1);
 
         Option columnnameOption = new Option(
                 properties.getProperty("option.columnname.short"),
@@ -66,7 +66,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.columnname.description")
         );
-        columnnameOption.setArgs(1); // число аргументов в опции
+        columnnameOption.setArgs(1);
 
         Option modeOption = new Option(
                 properties.getProperty("option.mode.short"),
@@ -74,7 +74,7 @@ public class CliOptionsManager {
                 true,
                 properties.getProperty("option.mode.description")
         );
-        modeOption.setArgs(1); // число аргументов в опции
+        modeOption.setArgs(1);
 
         Option dbCopyOption = new Option(
                 properties.getProperty("option.exportdb.short"),
@@ -82,7 +82,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.exportdb.description")
         );
-        dbCopyOption.setArgs(0); // число аргументов в опции
+        dbCopyOption.setArgs(0);
 
         Option helpOption = new Option(
                 properties.getProperty("option.help.short"),
@@ -90,7 +90,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.help.description")
         );
-        helpOption.setArgs(0); // число аргументов в опции
+        helpOption.setArgs(0);
 
         Option showDatabasesOption = new Option(
                 properties.getProperty("option.showdb.short"),
@@ -98,7 +98,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.showdb.description")
         );
-        showDatabasesOption.setArgs(0); // число аргументов в опции
+        showDatabasesOption.setArgs(0);
 
         Option showUsersOption = new Option(
                 properties.getProperty("option.showusers.short"),
@@ -106,7 +106,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.showusers.description")
         );
-        showUsersOption.setArgs(0); // число аргументов в опции
+        showUsersOption.setArgs(0);
 
         Option showTablesOption = new Option(
                 properties.getProperty("option.showtables.short"),
@@ -114,7 +114,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.showtables.description")
         );
-        showTablesOption.setArgs(0); // число аргументов в опции
+        showTablesOption.setArgs(0);
 
         Option showColumnsOption = new Option(
                 properties.getProperty("option.showcolumns.short"),
@@ -122,7 +122,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.showcolumns.description")
         );
-        showColumnsOption.setArgs(0); // число аргументов в опции
+        showColumnsOption.setArgs(0);
 
         Option obfOption = new Option(
                 properties.getProperty("option.obf.short"),
@@ -130,7 +130,7 @@ public class CliOptionsManager {
                 false,
                 properties.getProperty("option.obf.description")
         );
-        obfOption.setArgs(0); // число аргументов в опции
+        obfOption.setArgs(0);
 
         options.addOption(usernameOption);
         options.addOption(hostOption);

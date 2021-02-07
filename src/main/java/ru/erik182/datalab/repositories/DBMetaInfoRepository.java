@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DBMetaInfoRepository {
 
-    private static final String SQL_GET_DB_NAMES = "SELECT datname FROM pg_database;";
+    private static final String SQL_GET_DB_NAMES = "SELECT datname FROM pg_database WHERE NOT datistemplate;";
     private static final String SQL_GET_USERNAMES = "select usename from pg_shadow;";
     private static final String SQL_GET_TABLENAMES = "SELECT table_name FROM information_schema.tables " +
             "WHERE table_schema NOT IN ('information_schema','pg_catalog');";
@@ -26,6 +26,17 @@ public class DBMetaInfoRepository {
             "              ON ccu.constraint_name = tc.constraint_name " +
             "                  AND ccu.table_schema = tc.table_schema " +
             "WHERE tc.constraint_type = 'FOREIGN KEY' " +
+            "  AND tc.table_name = ? " +
+            "  AND kcu.column_name = ?;";
+    private static final String SQL_CHECK_COLUMN_PRIMARY_KEY = "SELECT DISTINCT 1 " +
+            "FROM information_schema.table_constraints AS tc " +
+            "         JOIN information_schema.key_column_usage AS kcu " +
+            "              ON tc.constraint_name = kcu.constraint_name " +
+            "                  AND tc.table_schema = kcu.table_schema " +
+            "         JOIN information_schema.constraint_column_usage AS ccu " +
+            "              ON ccu.constraint_name = tc.constraint_name " +
+            "                  AND ccu.table_schema = tc.table_schema " +
+            "WHERE tc.constraint_type = 'PRIMARY KEY' " +
             "  AND tc.table_name = ? " +
             "  AND kcu.column_name = ?;";
     private final Connection connection;
@@ -64,7 +75,7 @@ public class DBMetaInfoRepository {
         }
     }
 
-    public List<String> getTableNames(){
+    public List<String> getTableNames() {
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_TABLENAMES);
             ResultSet resultSet = statement.executeQuery();
@@ -79,7 +90,7 @@ public class DBMetaInfoRepository {
         }
     }
 
-    public List<ColumnInfo> getColumnInfo(String tablename){
+    public List<ColumnInfo> getColumnInfo(String tablename) {
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_GET_COLUMNS);
             statement.setString(1, tablename);
@@ -88,7 +99,7 @@ public class DBMetaInfoRepository {
             while (resultSet.next()) {
                 String dataType = resultSet.getString("data_type");
                 String charMaxLength = resultSet.getString("character_maximum_length");
-                if(charMaxLength != null && !charMaxLength.isEmpty()){
+                if (charMaxLength != null && !charMaxLength.isEmpty()) {
                     dataType = dataType + "(" + charMaxLength + ")";
                 }
                 ColumnInfo columnInfo = ColumnInfo.builder()
@@ -103,9 +114,21 @@ public class DBMetaInfoRepository {
         }
     }
 
-    public boolean checkColumnForeignKeys(String tablename, String columnname){
+    public boolean checkColumnForeignKeys(String tablename, String columnname) {
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_CHECK_COLUMN_FOREIGN_KEYS);
+            statement.setString(1, tablename);
+            statement.setString(2, columnname);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public boolean checkColumnPrimaryKey(String tablename, String columnname) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(SQL_CHECK_COLUMN_PRIMARY_KEY);
             statement.setString(1, tablename);
             statement.setString(2, columnname);
             ResultSet resultSet = statement.executeQuery();

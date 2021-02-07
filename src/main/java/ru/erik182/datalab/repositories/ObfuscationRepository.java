@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ObfuscationRepository {
-    
+
     private static final String SQL_OBFUSCATE_COLUMN_MD5 = "UPDATE %s " +
             "set %s = left(md5(%s), (SELECT character_maximum_length " +
             "                            FROM information_schema.columns " +
