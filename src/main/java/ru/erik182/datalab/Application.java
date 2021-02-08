@@ -12,8 +12,8 @@ import ru.erik182.datalab.models.MaskMode;
 import ru.erik182.datalab.repositories.DBMetaInfoRepository;
 import ru.erik182.datalab.repositories.ObfuscationRepository;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,7 +21,6 @@ import java.util.Properties;
 
 public class Application {
 
-    private static final String PROPERTIES_URL = "src/main/resources/application.properties";
     private static final Logger log = Logger.getLogger(Application.class);
     private static final Options options = new Options();
     private static Properties properties;
@@ -54,12 +53,12 @@ public class Application {
 
     public static void init() throws InitException {
         // property file init
-        FileInputStream fis;
+        InputStream is;
         properties = new Properties();
 
         try {
-            fis = new FileInputStream(PROPERTIES_URL);
-            properties.load(fis);
+            is = Application.class.getClassLoader().getResourceAsStream("application.properties");
+            properties.load(is);
         } catch (IOException e) {
             throw new InitException("A property initialization error.");
         }
